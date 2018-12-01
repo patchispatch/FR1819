@@ -11,6 +11,28 @@ Este documento recoge apuntes de la asignatura **Fundamentos de Redes**, basados
 ## Índice
 
 <!--ts-->
+   * [Fundamentos de Redes](#fundamentos-de-redes)
+      * [Índice](#índice)
+      * [Tema 1: Introducción a los Fundamentos de Redes](#tema-1-introducción-a-los-fundamentos-de-redes)
+         * [1. Sistemas de comunicación y redes](#1-sistemas-de-comunicación-y-redes)
+            * [1.1. Conceptos básicos](#11-conceptos-básicos)
+            * [1.2. Razones para usar redes](#12-razones-para-usar-redes)
+            * [1.3. Clasificación de redes](#13-clasificación-de-redes)
+            * [1.4. Estructura y elementos de una red](#14-estructura-y-elementos-de-una-red)
+         * [2. Diseño y estandarización de redes](#2-diseño-y-estandarización-de-redes)
+            * [2.1. Problemas a resolver](#21-problemas-a-resolver)
+            * [2.2. Conceptos y principios de diseño](#22-conceptos-y-principios-de-diseño)
+         * [3. Terminología y servicios](#3-terminología-y-servicios)
+            * [3.1. Modelo OSI: comunicación real frente a comunicación virtual](#31-modelo-osi-comunicación-real-frente-a-comunicación-virtual)
+            * [3.2. Servicios](#32-servicios)
+         * [4. Internet: arquitectura y direccionamiento](#4-internet-arquitectura-y-direccionamiento)
+            * [4.1. Arquitectura](#41-arquitectura)
+            * [4.2. Direccionamiento](#42-direccionamiento)
+      * [Tema 2: servicios y protocolos de aplicación en Internet](#tema-2-servicios-y-protocolos-de-aplicación-en-internet)
+      * [Referencias](#referencias)
+
+<!-- Added by: patchispatch, at: 2018-12-01T22:03+01:00 -->
+
 <!--te-->
 
 ---
@@ -163,7 +185,6 @@ Para realizar el direccionamiento, necesitamos lo siguiente:
 ---
 
 ## Tema 2: servicios y protocolos de aplicación en Internet
-
 
 
 
