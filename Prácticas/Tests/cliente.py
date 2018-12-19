@@ -65,8 +65,12 @@ def login(user, passwd):
 			print('Usted es usuario.')
 		elif data[1] == 'ADMIN':
 			print('Usted es administrador.')
+
+		# Pasamos al menú:
+		menu()
 	else:
 		print("Error de autenticación.")
+		exit()
 
 def menu():
 	# Establecemos el tipo de paquete que queremos enviar:
@@ -92,13 +96,27 @@ def menu():
 		print("Opción no disponible.")
 		exit()
 
-	elif 'Crear' in data[option]:
+	elif 'Crear' in data[option-1]:
 		crear()
+
+	elif 'Salir' in data[option-1]:
+		s.close()
+		exit()
+
+	else:
+		print('Opción no implementada.')
+		exit()
 
 
 def crear():
 	# Enviamos la petición de crear cuestionario
 	pack = 'CREAR_FORMULARIO'
+
+	# Pedimos al usuario el nombre del formulario:
+	name = input("Por favor, introduzca el nombre del formulario: ")
+
+	# Componemos el mensaje a enviar:
+	message = ';'.join(pack, name)
 
 	# Enviamos el mensaje al servidor:
 	s.send(pack)
@@ -122,7 +140,10 @@ def add_question():
 	pack = 'ADD_QUESTION'
 
 	# Pedimos al usuario que introduzca una pregunta:
-	pregunta = input('Introduce una pregunta: ')
+	pregunta = input('Introduce una pregunta. Para volver al menú, no pongas nada: ')
+
+	if pregunta == '':
+		menu()
 
 	# Elaboramos el mensaje:
 	message = ';'.join(pack, pregunta)
@@ -147,16 +168,17 @@ def add_question():
 def add_answer():
 	# Enviamos la petición de crear cuestionario
 	pack = 'ADD_ANSWER'
+	respuesta = []
 
 	# Pedimos al usuario que introduzca la respuesta correcta:
-	respuesta = input('Introduce la respuesta correcta: ')
+	respuesta[0] = input('Introduce la respuesta correcta: ')
 
 	# Introducimos tres respuestas falsas:
-	for i in range(0,2):
-		
+	for i in range(1,3):
+		respuesta[i] = input('Introduce una respuesta falsa: ')
 
 	# Elaboramos el mensaje:
-	message = ';'.join(pack, pregunta)
+	message = ';'.join(pack, respuesta)
 
 	# Enviamos el mensaje al servidor:
 	s.send(message)
@@ -169,8 +191,17 @@ def add_answer():
 
 	# Comprobamos si se puede crear:
 	if data[0] is 'OK':
-		add_answer()
+		add_question()
 
 	else:
 		print("Opción no permitida.")
 		exit()
+
+
+def main():
+	s.connect(HOST, PORT)
+	login()
+
+
+if __name__ == '__main__':
+	main()
