@@ -186,6 +186,21 @@ Para realizar el direccionamiento, necesitamos lo siguiente:
 
 ## Tema 2: servicios y protocolos de aplicación en Internet
 
+### 1. Introducción a las aplicaciones de red
+
+#### 1.1. Arquitectura Cliente/Servidor
+
+**Servidor**
+- Siempre en funcionamiento.
+- IP permanente y pública.
+- Pueden estar agrupados en *granjas*.
+
+**Clientes**
+- Funcionan de forma intermitente.
+- Pueden tener IP dinámica y privada.
+- Se comunican con el servidor.
+- No se comunican entre sí.
+
 
 
 ---
