@@ -86,8 +86,8 @@ def menu():
 	data = aux.split(';')
 
 	# Imprimimos las opciones del menú recibidas:
-	for i in range(0, len(data):
-		print("{}: {}\n".format(i, data[i-1])
+	for i in range(0, len(data)):
+		print("{}: {}\n".format(i, data[i-1]))
 
 	# El usuario selecciona una opción del menú:
 	option = input("Selecciona una opción con su número correspondiente: ")
@@ -199,9 +199,8 @@ def add_answer():
 
 
 def main():
-	s.connect(HOST, PORT)
+	s.connect((HOST, PORT))
 	login()
-
 
 if __name__ == '__main__':
 	main()
