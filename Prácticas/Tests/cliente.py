@@ -40,9 +40,13 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Métodos:
 
-def login(user, passwd):
+def login():
 	# Establecemos el tipo de paquete que queremos enviar:
 	pack = 'LOGIN;'
+
+	# Preguntamos al usuario:
+	user = input('Introduzca su usuario: ')
+	passwd = input('Introduzca su contraseña: ')
 
 	# Vamos añadiendo el contenido del paquete:
 	message = ';'.join(pack, user, passwd)
