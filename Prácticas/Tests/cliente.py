@@ -45,10 +45,10 @@ def login(user, passwd):
 	pack = 'LOGIN;'
 
 	# Vamos añadiendo el contenido del paquete:
-	pack.join(user.join(';'.join(passwd)))
+	message = ';'.join(pack, user, passwd)
 
 	# Enviamos el mensaje al servidor:
-	s.send(pack)
+	s.send(message)
 
 	# Recibimos datos del servidor:
 	aux = s.recv(BUFFER_SIZE)
@@ -121,8 +121,14 @@ def add_question():
 	# Enviamos la petición de añadir pregunta:
 	pack = 'ADD_QUESTION'
 
+	# Pedimos al usuario que introduzca una pregunta:
+	pregunta = input('Introduce una pregunta: ')
+
+	# Elaboramos el mensaje:
+	message = ';'.join(pack, pregunta)
+
 	# Enviamos el mensaje al servidor:
-	s.send(pack)
+	s.send(message)
 
 	# Recibimos datos del servidor:
 	aux = s.recv(BUFFER_SIZE)
@@ -130,29 +136,41 @@ def add_question():
 	# Interpretamos el formato del paquete:
 	data = aux.split(';')
 
-	# Comprobamos si se puede añadir:
+	# Comprobamos si se puede crear:
 	if data[0] is 'OK':
-		question = input('Introduce una pregunta: ')
-		send_question(question)
+		add_answer()
 
 	else:
 		print("Opción no permitida.")
 		exit()
 
-def send_question():
+def add_answer():
 	# Enviamos la petición de crear cuestionario
-	pack = 'ADD_QUESTION'
+	pack = 'ADD_ANSWER'
 
-	# Comprobamos si se puede añadir:
-	if data[0] is 'OK':
-		question = input('Introduce una pregunta: ')
+	# Pedimos al usuario que introduzca la respuesta correcta:
+	respuesta = input('Introduce la respuesta correcta: ')
 
-	else:
-		print("Opción no permitida.")
-		exit()
+	# Introducimos tres respuestas falsas:
+	for i in range(0,2):
+		
+
+	# Elaboramos el mensaje:
+	message = ';'.join(pack, pregunta)
 
 	# Enviamos el mensaje al servidor:
-	s.send(pack)
+	s.send(message)
 
 	# Recibimos datos del servidor:
 	aux = s.recv(BUFFER_SIZE)
+
+	# Interpretamos el formato del paquete:
+	data = aux.split(';')
+
+	# Comprobamos si se puede crear:
+	if data[0] is 'OK':
+		add_answer()
+
+	else:
+		print("Opción no permitida.")
+		exit()
