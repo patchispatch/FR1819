@@ -122,5 +122,3 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         conn.sendall(b'OK')
                     else:
                         conn.sendall(b'ERR')
-
-            conn.sendall(data)
