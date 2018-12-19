@@ -90,7 +90,69 @@ def menu():
 
 	if option not in range(1, len(data)):
 		print("Opción no disponible.")
-		exit();
+		exit()
 
 	elif 'Crear' in data[option]:
-		# Enviamos la petición de crear cuestionario
+		crear()
+
+
+def crear():
+	# Enviamos la petición de crear cuestionario
+	pack = 'CREAR_FORMULARIO'
+
+	# Enviamos el mensaje al servidor:
+	s.send(pack)
+
+	# Recibimos datos del servidor:
+	aux = s.recv(BUFFER_SIZE)
+
+	# Interpretamos el formato del paquete:
+	data = aux.split(';')
+
+	# Comprobamos si se puede crear:
+	if data[0] is 'OK':
+		add_question()
+
+	else:
+		print("Opción no permitida.")
+		exit()
+
+def add_question():
+	# Enviamos la petición de añadir pregunta:
+	pack = 'ADD_QUESTION'
+
+	# Enviamos el mensaje al servidor:
+	s.send(pack)
+
+	# Recibimos datos del servidor:
+	aux = s.recv(BUFFER_SIZE)
+
+	# Interpretamos el formato del paquete:
+	data = aux.split(';')
+
+	# Comprobamos si se puede añadir:
+	if data[0] is 'OK':
+		question = input('Introduce una pregunta: ')
+		send_question(question)
+
+	else:
+		print("Opción no permitida.")
+		exit()
+
+def send_question():
+	# Enviamos la petición de crear cuestionario
+	pack = 'ADD_QUESTION'
+
+	# Comprobamos si se puede añadir:
+	if data[0] is 'OK':
+		question = input('Introduce una pregunta: ')
+
+	else:
+		print("Opción no permitida.")
+		exit()
+
+	# Enviamos el mensaje al servidor:
+	s.send(pack)
+
+	# Recibimos datos del servidor:
+	aux = s.recv(BUFFER_SIZE)
