@@ -1,0 +1,164 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}	%Idioma
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx} %Añadir imágenes
+\usepackage{geometry}	%Ajustar márgenes
+\usepackage[export]{adjustbox}[2011/08/13]
+\usepackage{float}
+\restylefloat{table}
+\usepackage{hyperref}
+\usepackage{titling}
+\usepackage{minted}
+\usepackage[font=small,labelfont=bf]{caption} 
+
+%Opciones de encabezado y pie de página:
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{}
+%\rhead{}
+\lfoot{Fundamentos de Redes}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+%Opciones de fuente:
+\usepackage[utf8]{inputenc}
+\usepackage[default]{sourcesanspro}
+\usepackage{sourcecodepro}
+\usepackage[T1]{fontenc}
+
+
+\setlength{\parindent}{0pt}
+\setlength{\headheight}{15pt}
+\setlength{\voffset}{10mm}
+
+% Custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+\usepackage{listings}
+
+% Evitar guiones al final de línea.
+%\tolerance=1
+%\emergencystretch=\maxdimen
+%\hyphenpenalty=10000
+%\hbadness=10000
+
+\pretitle{%
+  \centering
+  \LARGE
+  \includegraphics[scale=0.5]{img/logo.png}\\[\bigskipamount]
+}
+\posttitle{\begin{center} \end{center}}
+
+\author{	José Baena Cobos \\ Juan Ocaña Valenzuela}
+\title{\textbf{Fundamentos de Redes} \\ 
+ Práctica 2: aplicación de cuestionarios utilizando sockets}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% EL DOCUMENTO EMPIEZA AQUÍ
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\thispagestyle{empty}
+
+\maketitle
+
+\begin{center}
+%\url{https://github.com/patchispatch}
+
+Versión: 1.0
+\end{center}
+
+\newpage
+
+Esta obra está sujeta a la licencia Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional de Creative Commons. Para ver una copia de esta licencia, visite 
+
+\url{http://creativecommons.org/licenses/by-nc-sa/4.0/}.
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Descripción del sistema}
+El sistema consiste en una aplicación con arquitectura cliente-servidor, en la que un usuario puede autenticarse y crear y responder formularios, ser puntuado y consultar las calificaciones obtenidas. 
+Se ha definido un protocolo basado en TCP/IP, debido a que garantiza la recepción de los mensajes, ya que es un servicio orientado a conexión.
+
+\medskip
+
+Existen dos roles para el usuario: \textbf{usuario} y \textbf{administrador}.
+El sistema, de cara al usuario, se compone de las siguientes partes:
+
+\subsection*{Login}
+El usuario indicará su usuario y contraseña, lo cual lo autenticará en el sistema, ya sea como usuario o como administrador.
+
+\subsection*{Menú}
+El menú indicará, en forma de lista, las opciones que se pueden realizar. Cabe destacar que las opciones varían en funcion del rol de usuario, y son las siguientes:
+
+\medskip
+
+\textbf{Usuario:}
+\begin{itemize}
+\item \textbf{Responder:} permite consultar los formularios disponibles y responderlos.
+\item \textbf{Consultar:} permite consultar las calificaciones obtenidas por el usuario en los diferentes cuestionarios respondidos.
+\end{itemize}
+
+\textbf{Administrador:}
+\begin{itemize}
+\item \textbf{Crear:} permite crear un formulario.
+\item \textbf{Responder: } permite consultar los formularios disponibles y responderlos.
+\item \textbf{Consultar:} permite consultar las calificaciones obtenidas por \textbf{cualquier usuario} en los diferentes cuestionarios respondidos.
+\end{itemize}
+
+\subsection*{Crear}
+La creación de cuestionarios consiste en dos etapas de comunicación entre el cliente y el servidor; el servidor \textit{pregunta} al cliente por los datos, y el cliente le \textit{responde} hasta que decida que ha terminado. En ese momento, el cuestionario elaborado se almacena por parte del servidor en una base de datos SQLite, para posteriormente ser consultado y respondido por los usuarios.
+
+\subsection*{Responder}
+Al seleccionar la opción de responder, se proporcionará un listado de los cuestionarios disponibles, y una vez elegido uno, se procede a responder a las preguntas de forma secuencial. Una vez terminado el proceso, se calcula la nota final, se imprime por pantalla, y se almacena en la base de datos del servidor.
+
+\subsection*{Consultar}
+La opción de consulta imprime una lista de los cuestionarios realizados, junto con la nota obtenida en cada uno de ellos, del usuario actual. En caso de que el rol del usuario sea \textit{administrador}, podrá consultar los resultados de cualquier otro.
+
+
+\section{Implementación y cuestiones finales}
+Se ha decidido realizar la implementación parcial del sistema en Python, ya que es un lenguaje con una sintaxis muy legible, que permite una fácil integración con socket y bases de datos relacionales, utilizadas en el mismo.
+
+\medskip
+
+También se ha optado por implementar la funcionalidad de creación de cuestionarios, debido a que es la única función exclusiva del rol de administrador.
+
+\medskip
+
+Tanto el código como el diseño del protocolo se adjuntan junto con este documento.
+
+\section{Bibliografía}
+Python Wiki: TCP Communication
+
+\url{https://wiki.python.org/moin/TcpCommunication}
+
+\medskip
+
+Ejemplo de programación con Socket en Python 3:
+
+\url{https://bit.ly/2EFMBtQ}
+
+\medskip
+
+Guía de socket en Python:
+
+\url{https://realpython.com/python-sockets/}
+
+
+
+
+
+\end{document}
