@@ -32,8 +32,8 @@ import socket
 
 # Detalles de la conexión:
 HOST = '127.0.0.1'
-PORT = 5000
-BUFFER_SIZE = 1024
+PORT = 5009
+BUFFER_SIZE = 65507
 
 # Socket:
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,17 +42,18 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def login():
 	# Establecemos el tipo de paquete que queremos enviar:
-	pack = 'LOGIN;'
+	pack = 'LOGIN'
 
 	# Preguntamos al usuario:
 	user = input('Introduzca su usuario: ')
 	passwd = input('Introduzca su contraseña: ')
 
 	# Vamos añadiendo el contenido del paquete:
-	message = ';'.join(pack, user, passwd)
+	message = ';'.join([pack, user, passwd])
 
+	#print(message)
 	# Enviamos el mensaje al servidor:
-	s.send(message)
+	s.send(message.encode())
 
 	# Recibimos datos del servidor:
 	aux = s.recv(BUFFER_SIZE)
