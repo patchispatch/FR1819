@@ -27,9 +27,10 @@
 
 import socket
 import sqlite3
+import atexit
 
 HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
-PORT = 5009        # Port to listen on (non-privileged ports are > 1023)
+PORT = 5003        # Port to listen on (non-privileged ports are > 1023)
 
 conn_db = sqlite3.connect('formulario.db')
 c = conn_db.cursor()
@@ -54,9 +55,13 @@ def user_exists(nombre):
 def check_pass(user, password):
     c.execute("SELECT password FROM Usuarios WHERE user=\'%s\'" % user)
     print(c.fetchone()[0])
+    print(c.fetchone())
+    print(password)
     if str(c.fetchone()[0]) == str(password):
-        return True
-    return False
+        resultado = True
+    else:
+        resultado = False
+    return resultado
 
 def check_is_admin(user):
     c.execute("SELECT is_admin FROM Usuarios WHERE user=\'%s\'" % user)
@@ -130,12 +135,13 @@ def main():
                 data = conn.recv(65507)
                 data = str(data).split('b\'')
                 data = str(data[1]).split('\'')
-                print(data)
                 data = str(data[0]).split(';')
 
                 #data = recibido#"received: {}".format(data2)#.split(';')
                 print(data)
+                return
                 if not data:
+                    conn.close()
                     break
                 else:
                     if data[0] == 'LOGIN':
@@ -183,6 +189,9 @@ def main():
                             conn.sendall(b'ERR')
 
         conn.close()
+        atexit.register(conn.close())
+
+
 
 if __name__ == '__main__':
     main()

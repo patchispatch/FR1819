@@ -32,7 +32,7 @@ import socket
 
 # Detalles de la conexión:
 HOST = '127.0.0.1'
-PORT = 5009
+PORT = 5003
 BUFFER_SIZE = 65507
 
 # Socket:
@@ -55,6 +55,7 @@ def login():
 	# Enviamos el mensaje al servidor:
 	s.send(message.encode())
 
+	return
 	# Recibimos datos del servidor:
 	aux = s.recv(BUFFER_SIZE)
 
