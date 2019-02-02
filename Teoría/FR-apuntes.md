@@ -4,7 +4,7 @@
 
 > **Advertencia:** estos apuntes se encuentran en desarrollo, y son para uso personal. Si quieres contribuir o crees que he cometido errores, siéntete libre de hacer una *pull request*.
 
-Este documento recoge apuntes de la asignatura **Fundamentos de Redes**, basados en el material docente ofrecido por el *departamento de Teoría de la Señal, Telemática y Comunicaciones* de la Universidad de Granada.
+Este documento recoge apuntes de la asignatura **Fundamentos de Redes**, basados en el material docente ofrecido por el *departamento de Teoría de la Señal, Telemática y Comunicaciones* de la Universidad de Granada, y en los apuntes recogidos por [Marta Gómez y Braulio Vargas](https://github.com/mgmacias95/Apuntes/blob/master/FR/apuntesfr.tex).
 
 ---
 
@@ -42,41 +42,59 @@ Este documento recoge apuntes de la asignatura **Fundamentos de Redes**, basados
 
 #### 1.1. Conceptos básicos
 
-Un **Sistema de comunicación** es una infraestructura que permite el intercambio de información.
+Un **Sistema de comunicación** es una infraestructura que permite el intercambio de información. Podemos expresarlo como un conjunto de elementos:
+
+- **Emisor:** origen de la información.
+- **Destino:** destinatario de la información transmitida.
+- **Transmisor:** intermediario entre el canal y el emisor, encargado de adaptar la señal transmitida a las características del medio de transimisión.
+- **Receptor:** intermediario entre el canal y el receptor, encargado de adaptar las características de la señal a las del destino.
+
 
 	Insertar imagen p4
 
+
 La **información** es un conjunto de datos con significado.
 
-Una **red de dispositivos** es un sistema de comunicación con sistemas finales (terminales) *autónomos* que facilita el intercambio *eficaz* y *transparente* de información.
+Una **red de dispositivos** es un caso particular de sistema de comunicación, y dispone de sistemas finales (terminales) *autónomos* que facilita el intercambio *eficaz* y *transparente* de información.
 
-#### 1.2. Razones para usar redes
+#### 1.2. Características de las redes
 
-- Compartir recursos
-- Escalabilidad
-- Fiabilidad, robustez -> Duplicidad (redundancia)
-- Ahorro de costes (computación distribuida)
+- **Interconexión:** la existencia de canales de transmisión permite la comunicación entre los equipos de la red.
+- **Autonomía:** los equipos son independientes en cuanto a funcionamiento.
+- **Intercambio de información.**
+
+El objetivo principal de las redes es el de **compartir recursos**. Sin embargo, hay más razones por las que resultan de gran utilidad:
+
+- **Escalabilidad:** una red es mucho más fácil de escalar que un computador tradicional, ya que si necesitamos ampliar recursos, en la red bastaría con añadir equipos, sin necesidad de sustituir componentes.
+- **Fiabilidad:** al disponer de varios equipos conectados, puede haber *duplicidad* de recursos, por lo que es menos probable que se pierdan.
+- **Ahorro de costes:** los equipos de una red son más fáciles de mantener que un supercomputador; por tanto, saldrá más barato.
 
 #### 1.3. Clasificación de redes
 
-**Por escala**
+Las redes se clasifican en base a dos principales criterios:
+
+**Por escala: **
 - *Local* Area Network (LAN)
 - *Medium* Area Network (MAN)
 - *Wide* Area Network (WAN)
 
 **Por tecnología de transmisión o uso del canal de comunicación**
-- Difusión
-- Punto a punto
+- **Difusión:** las transmisiones se realizan desde un único medio, compartido por todos los equipos.
+- **Punto a punto:** existen enlaces entre dos equipos en los que ambos actúan de emisor y receptor, dependiendo de la transmisión. Cuando el número de enlaces es igual al de parejas posibles de equipos, se llama *topología*, pero no es usual debido a su alto coste.
 
 	Insertar imagen p5
 
+Las redes LAN utilizan tecnología de difusión, mientras que las WAN usan la comunicación punto a punto.
+
 #### 1.4. Estructura y elementos de una red
+
+Podemos definir los siguientes elementos en una red:
 
 **Hosts:** sistemas finales (terminales) autónomos.
 
 **Subred:** infraestructura para el transporte de información, compuesta por:
-- Líneas de transmisión.
-- Nodos o elementos de conmutación. Ejemplos:
+- **Líneas de transmisión**.
+- **Nodos o elementos de conmutación:** dispositivos que transportan datos desde un origen a un destino. Ejemplos:
   - Routers
   - Switches
   - Estaciones base
@@ -99,34 +117,47 @@ Existen una serie de **problemas** que la red debe resolver, para garantizar *tr
 - Representación de los datos (sintaxis).
 - Significado de los datos (semántica).
 
+Veremos a continuación diferentes soluciones a estos problemas.
+
 #### 2.2. Conceptos y principios de diseño
 
-**Conceptos de diseño**
-- Funcionalidad en capas.
-- Definición de *modelo de referencia* -> capas + funcionalidades.
+El diseño de una red se plantea por **capas**. Cada capa se encarga de una función, obteniendo así un sistema modular, mucho más flexible. Una vez disponemos de un conjunto de capas, cada una con su funcionalidad, ya tenemos un **modelo de referencia**.
 
-**Principios de diseño pafra el modelo**
-- Funcionalidades distintas en distintas capas
-- Minimización del flujo de información entre capas.
+Existen dos tipos de modelos de red:
+
+- ***De facto*:** se adoptan sin haber seguido un proceso de estandarización.
+- ***De jure*:** han sido desarrollados por organismos de estandarización reconocidos.
+
+Los modelos más conocidos son **OSI** y **TCP/IP**.
+
+	Insertar imagen OSI TCP
 
 **Modelo OSI**
-El modelo OSI[^1] (*Open System Interconnection*) es un modelo de referencia para los protocolos de red creado por la ISO[^2] en 1980
+El modelo OSI (*Open System Interconnection*) es un modelo de referencia para los protocolos de red creado por la ISO en 1980
 
-El modelo define las siguientes **capas** (en orden):
-- Aplicación
-- Presentación
-- Sesión
-- Transporte
-- Red
-- Enlace
-- Física
+El modelo define las siguientes **capas** (de arriba a abajo):
+- **Aplicación:** servicios finales que se ofrecen al usuario (correo electrónico, Discord, etc).
+- **Presentación:** en esta capa se resuelven problemas sobre la representación de datos que provienen de la capa superior (codificación, por ejemplo).
+- **Sesión:** esta capa se encarga de gestionar el turno de palabra entre los hosts participantes.
+- **Transporte:** controla la transmisión de datos entre los hosts, y se asegura de que se realiza correctamente.
+- **Red:** tiene tres funciones principales:
+  - *Encaminamiento*: establecimiento de la ruta a seguir desde un host a otro.
+  - *Control de congestión*: evita la saturación de la subred como consecuencia de un tráfico elevado.
+  - *Interconexión de redes*: posibilita la transmisión de datos entre hosts situados en diferentes redes.
+- **Enlace:** en esta capa, los bits de datos se agrupan en bloques llamados "tramas". Realiza las siguientews funciones:
+  - *Delimitación de tramas*: permite conocer el inicio y fin de un bloque de datos y sincronizar al emisor y al receptor.
+  - *Control de errores*: comprueba que la información recibida corresponde con la enviada.
+  - *Control de flujo*: evita que el emisor sature el *buffer* de recepción del destino debido a una velocidad diferente entre las dos partes.
+- **Física:** en ella se llevan a cabo funciones relacionadas con la transmisión de datos desde el punto de vista de la gestión de características eléctricas, mecánicas y funcionales para una adecuada transferencia sobre el canal. Sería la tarjeta de red.
 
-**Modelo TCP/IP**
-El modelo de referencia TCP/IP se basa en el protocolo TCP[^3] sobre la red de transmisión IP[^4], y describe las siguientes **capas**:
-- Aplicación
-- Transporte
-- Red
-- Red subyacente
+El modelo OSI tiene capas con muy poco contenido. Por eso es normal ver un numero menor de capas en otros modelos, ya que varias funciones se asocian a la misma capa. En **TCP/IP** se distinguen las siguientes capas:
+
+- **Aplicación:** se definen en esta capa servicios como *telnet* (acceso remoto), *ftp* (transmisión de archivos), *http* (web), etc.
+- **Transporte:** control de flujo, de errores, de congestión y de conexión (extremo a extremo).
+- **Red:** encaminamiento.
+
+TCP/IP es el modelo que se utiliza en internet, y es una red software, ya que se puede implementar sobre cualquier tecnología de red. Es un ejemplo de modelo *de facto*, y el más extendido en la actualidad.
+La red subyacente no se tiene en consideración en TCP/IP, ya que al ser un modelo software, no especifica las características de la misma, pudiendo variar en cada ordenador.
 
 ### 3. Terminología y servicios
 
@@ -134,52 +165,72 @@ El modelo de referencia TCP/IP se basa en el protocolo TCP[^3] sobre la red de t
 
 	 Insertar imagen p16
 
-**Terminología**
-- Comunicación real (vertical).
-- Comunicación virtual (horizontal).
-- Entidad del nivel N (1 = físico ... 7 = aplicación).
-- Entidades pares.
-- Protocolo.
-- Interfaz.
-- Servicio.
-- Capa proveedora/usuario del servicio.
-- Pila de protocolos
-- Arquitectura de red
-- SAP (*Service Access Point*).
-- SDU (*Service Data Unit*).
-- PDU (*Protocol Data Unit*).
+Dadas dos capas adyacentes, la capa inferior se denomina **proveedora de servicios**, y la inferior, **usuaria de servicios**, ya que la capa inferior ofrece una serie de servicios transparentes a la superior.
+
+Los elementos software o hardware de una capa se conocen como **entidades de nivel N**. Las entidades de nivel N en el emisor y en el receptor se conocen como **entidades pares**, ya que se conectan dos a dos.
+
+Existen dos tipos de comunicación entre emisor y receptor:
+- **Comunicación real (vertical):** es el flujo que sigue la información entre el emisor y el receptor, en sentido descendente (aplicación a física) en el emisor y ascendente (física a aplicación) en el receptor.
+- **Comunicación virtual (horizontal):** comunicación entre entidades pares. En la transmisión de un mensaje se necesita la colaboración de las entidades pares emisora y recepotora. Para ello, en cada capa (salvo en la física) se añade una cabecera para ayudar a comunicar las partes involucradas.
+
+Un **protocolo** es el conjunto de reglas y convenciones que se tienn que aplicar en una comunicación entre dos entidades. A las capas y protocolos asociados se les denomina **arquitectura de red**. En este sentido, OSI no es una arquitectura, ya que no define protocolos, mientras que TCP/IP sí, ya que en cada capa se conocen los protocolos que se tienen que tener en cuenta. La especificación en capas de una arquitectura de red se denomina **pila de protocolos**.
+
+La comunicación vertical se realiza mediante la **interfaz**, concretamente con los **puntos de acceso (*Service Access Points, SAP*)**. Dentro de la información que se transmite se distinguen la **unidad de datos de servicio (*Data Service Unit, SDU*)**, que son los datos que se quieren enviar (provienen de la capa superior), y la **unidad de datos de protocolo (*Protocol Data Unit, PDU*)**, que es la cabecera añadida para llevar a cabo las operaciones con entidades paritarias.
 
 	 Insertar imagen p18
 	 Insertar imagen p19
 
-#### 3.2. Servicios
+#### 3.2. Retardo
 
-**Tipos**
-- Orientado a Conexión (OC).
-- No Orientado a Conexión (NOC).
-- Confirmado (fiable).
-- No confirmado (no fiable).
+El **retardo** es el tiempo que tarda la información en llegar desde el host origen al destino.
+
+Deben distinguirse dos tiempos:
+- **Tiempo de transmisión:** cuánto se tarda en transmitir todos los bits a la red.
+
+
+![img](http://www.sciweavers.org/tex2img.php?eq=T_%7Bt%7D%20%3D%20%5Cfrac%7BTam%20%28B%29%7D%7BV_%7Bt%7D%20%28bps%29%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+
+- **Tiempo de propagación:** cuánto tarda la información en llegar al destino.
+
+
+![img2](http://www.sciweavers.org/tex2img.php?eq=T_%7Bt%7D%20%3D%20%5Cfrac%7BDistancia%20%28m%29%7D%7BV_%7Bpropagacion%7D%20%28m%2Fs%29%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+
+
+#### 3.3. Servicios
+
+Los diferentes servicios que se pueden ofrecer son los siguientes:
+
+- **Orientado a Conexión:** se establece una conexión como paso previo a la transmisión de datos entre el emisor y el receptor. Se realiza enviando un paquete de un tamaño por parte del emisor que el receptor debe devolver. Una vez devuelto, comienza el envío del resto de paquetes. Este tipo de servicios se utilizan cuando necesitamos que no haya pérdidas de información.
+- **No Orientado a Conexión:** no requiere de una conexión como el anterior, y el envío se realiza con una gran rapidez, aunue existan pérdidas en la transmisión. Un ejemplo de estos servicios es la reproducción de contenido multimedia online, en el que no importa si perdemos un frame o dos, pero necesitamos que lleguen constantemente para que la reproducción sea fluida.
+- **Confirmado (fiable):** el host emisor tiene constancia de que el receptor tiene el paquete.
+- **No confirmado (no fiable):** el host emisor no tiene forma de saber si el receptor tiene el paquete.
+
+
 
 ### 4. Internet: arquitectura y direccionamiento
 
 #### 4.1. Arquitectura 
 
-**Topología jerárquica**
-- Intranets (*Ethernet*) del usuario: zona pública + zona privada.
-- Redes de acceso.
-- Redes troncales de grandes operadores de telecomunicaciones.
-- Acuerdos de Peering[^5] y tránsito.
-- Tier1[^6], Tier2 y Tier3
-- Internet Exchange Points (IXP)[^7]
+Se establece una **topología jerárquica** entre diferentes tipos de redes:
+- **Intranets (*Ethernet*) del usuario:** zona pública + zona privada. Son las redes locales de usuario, en las que se incluyen direcciones privadas para la subred local y direcciones públicas para acceder a la red.
+- **Redes de acceso:** diferentes métodos de acceso, como el ADSL o la fibra óptica, pertenecientes al ISP (*Internet Service Provider*).
+- **Redes troncales:** son diferentes redes de grandes operadores de telecomunicaciones. Un ejemplo sería la *red Iris*, que conecta la comunidad investigadora y las universidades españolas. Hay varios tipos según su tamaño: *Tier-1*, *Tier-2* y *Tier-3*.
+- **Internet Exchange Points (IXP):** también conocidos como **puntos neutros**, son aquellos en los que las redes ISP se encuentran para intercambiar tráfico.
 
 #### 4.2. Direccionamiento
 
-Para realizar el direccionamiento, necesitamos lo siguiente:
-- Nombre de dominio. Ej: https://github.com/patchispatch
-- Dirección IP, necesaria para identificar los hosts (capa de red):
-  - Fuente.
-  - Destino.
-- Puertos, para diferentes conexiones (capa de transporte).
+Cuando queremos, por ejemplo, acceder a una página web, se genera un paquete de datos con la información necesaria para que las distintas capas por las que va a pasar sepan qué hacer con él, y lo transmitan entre los diferentes nodos por los que debe pasar hasta llegar a su destino. Una vez llegue, se nos devolverá la información que hemos pedido.
+
+Para conseguir que el paquete llegue a su destino necesitamos **direccionarlo**.
+El direccionamiento necesitamos los siguientes elementos:
+
+- **Nombre de dominio:** El nombre de dominio se especifica en la capa de aplicación, ya que es la que interactúa con el usuario. La capa se encarga de traducirlo a una dirección IP. Ej: https://github.com/patchispatch
+- **Dirección IP:** necesaria para identificar los host, se enuentra en la capa de red. Existen dos tipos:
+  - *Públicas:* direccionan a un único dispositivo y se paga (o se alquila) por ella. Son unívocas en todo Internet.
+  - *Privadas:* son direcciones que se pueden repetir en el mundo, pero no dentro de una red privada, ya que identifican a los diferentes dispositivos de la misma. Sin ellas, habríamos agotado el número de IPs disponibles en el mundo hace años.
+- **Puertos:** sieven para establecer diferentes conexiones y responder peticiones de otros dispositivos. Se localizan en la capa de transporte.
+
+
 
 ---
 
@@ -459,7 +510,6 @@ En las distintas capas de TCP/IP se definen una serie de **protocolos seguros**.
 
 
 ## Tema 3: Capa de transporte en Internet
-
 
 
 
