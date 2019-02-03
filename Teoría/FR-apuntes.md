@@ -50,7 +50,7 @@ Un **Sistema de comunicación** es una infraestructura que permite el intercambi
 - **Receptor:** intermediario entre el canal y el receptor, encargado de adaptar las características de la señal a las del destino.
 
 
-	Insertar imagen p4
+![conceptos basicos](https://i.imgur.com/NGO3Alr.png)
 
 
 La **información** es un conjunto de datos con significado.
@@ -82,7 +82,7 @@ Las redes se clasifican en base a dos principales criterios:
 - **Difusión:** las transmisiones se realizan desde un único medio, compartido por todos los equipos.
 - **Punto a punto:** existen enlaces entre dos equipos en los que ambos actúan de emisor y receptor, dependiendo de la transmisión. Cuando el número de enlaces es igual al de parejas posibles de equipos, se llama *topología*, pero no es usual debido a su alto coste.
 
-	Insertar imagen p5
+![tecnologia transmision](https://i.imgur.com/kbpwu0w.png)
 
 Las redes LAN utilizan tecnología de difusión, mientras que las WAN usan la comunicación punto a punto.
 
@@ -100,7 +100,7 @@ Podemos definir los siguientes elementos en una red:
   - Estaciones base
   - Etc.
 
-	Insertar imagen p6
+	![Nodos](https://i.imgur.com/a2QUSPS.png)
 
 ### 2. Diseño y estandarización de redes
 
@@ -130,7 +130,7 @@ Existen dos tipos de modelos de red:
 
 Los modelos más conocidos son **OSI** y **TCP/IP**.
 
-	Insertar imagen OSI TCP
+![OSI TCP](https://i.imgur.com/TKxmJHy.png)
 
 **Modelo OSI**
 El modelo OSI (*Open System Interconnection*) es un modelo de referencia para los protocolos de red creado por la ISO en 1980
@@ -163,7 +163,7 @@ La red subyacente no se tiene en consideración en TCP/IP, ya que al ser un mode
 
 #### 3.1. Modelo OSI: comunicación real frente a comunicación virtual
 
-	 Insertar imagen p16
+![OSI capas](https://i.imgur.com/iE6Ki8u.png)
 
 Dadas dos capas adyacentes, la capa inferior se denomina **proveedora de servicios**, y la inferior, **usuaria de servicios**, ya que la capa inferior ofrece una serie de servicios transparentes a la superior.
 
@@ -177,12 +177,12 @@ Un **protocolo** es el conjunto de reglas y convenciones que se tienn que aplica
 
 La comunicación vertical se realiza mediante la **interfaz**, concretamente con los **puntos de acceso (*Service Access Points, SAP*)**. Dentro de la información que se transmite se distinguen la **unidad de datos de servicio (*Data Service Unit, SDU*)**, que son los datos que se quieren enviar (provienen de la capa superior), y la **unidad de datos de protocolo (*Protocol Data Unit, PDU*)**, que es la cabecera añadida para llevar a cabo las operaciones con entidades paritarias.
 
-	 Insertar imagen p18
-	 Insertar imagen p19
 
 #### 3.2. Retardo
 
 El **retardo** es el tiempo que tarda la información en llegar desde el host origen al destino.
+
+![Retardo](https://i.imgur.com/w48FNJX.png)
 
 Deben distinguirse dos tiempos:
 - **Tiempo de transmisión:** cuánto se tarda en transmitir todos los bits a la red.
@@ -266,7 +266,7 @@ Un **socket** es un descriptor de transmisión entre aplicaciones. Cuenta con un
 
 En definitiva, un socket es un proceso o thread que existe en el cliente y el servidor, que se utiliza para que ambos escriban y lean la información, que será transmitida por las capas de red. Es un puntero a una estructura.
 
-	Insertar imagen p7
+![socket](https://i.imgur.com/qvMMbjZ.png)
 
 #### 1.3. Protocolos de aplicación
 
@@ -295,13 +295,13 @@ La tendencia es **definir los protocolos de forma flexible**, utilizando una cab
 
 Los trozos pueden incluir una cabecera específica más una serie de datos como parámetros. Para los parámetros se usa el formato TLV (*Type-Length-Value*).
 
-	Insertar imagen TLV
+![TLV](https://i.imgur.com/l1l7IRh.png)
 
 
 #### 1.4. Características
 
 **Pérdida de datos**
-Algunas aplicaciones soportan mejor la pérdida de datos que otras. En audio, por ejemplo, es tolerable; otros servicios como telnet o ssh requieren fiabilidad en la transmisión.
+Algunas aplicaciones soportan mejor la pérdida de datos que otras. En audio, por ejemplo, es tolerable; otros servicios como *telnet* o *ssh* requieren fiabilidad en la transmisión.
 
 **Requisitos temporales**
 Algunas apps requieren retardo acotado (bajo *delay*) para ser efectivas, como pueden ser las de telefonía o juegos.
@@ -327,8 +327,17 @@ A continuación se muestran ejemplos de aplicaciones de red, y la importancia qu
 
 En la mensajería instantánea es preferible que el mensaje tarde algo más en llegar a que existan pérdidas, de ahí el *depende* en la tabla.
 
-
 #### 1.5. Protocolos
+
+Los protocolos están estructurados de la siguiente forma:
+
+
+
+![Protocolos](https://i.imgur.com/75FvHlr.png)
+
+
+
+Nos vamos a centrar en **TCP** y **UDP**.
 
 | **Protocolo TCP**     | **Protocolo UDP**         |
 |-----------------------|---------------------------|
@@ -356,9 +365,9 @@ Sus características principales son:
 
 El nombre de dominio, al igual que la dirección IP, debe ser único y universal. Para asegurar esto, los dominios se estructuran de forma jerárquica de la siguiente forma:
 
-	goliat.ugr.es
+	deiit.ugr.es
 
-En este ejemplo, *.es* es el dominio de nivel 1 o superior, que engloba al subdominio *ugr*. Este, a su vez, engloba a *goliat*.
+En este ejemplo, *.es* es el dominio de nivel 1 o superior, que engloba al subdominio *ugr*. Este, a su vez, engloba a *deiit*.
 
 El dominio de nivel 1 se denomina **dominio genérico**. Originalmente se crearon nueve dominios genéricos, aunque ahora existen muchos más:
 
@@ -373,7 +382,7 @@ El dominio de nivel 1 se denomina **dominio genérico**. Originalmente se crearo
 | **.int**  | organizaciones estableidas por tratados internacionales                          |
 | **.xy**   |  indicativos de zona geográfica (*.es, .uk, .jp, etc*)                           |
 
-El dominio raíz "." está gestionado por la [ICANN](http://www.icann.org), que suele delegar en centros regionales. En España, este centro es Red.es.
+El dominio raíz "." está gestionado por la [ICANN](http://www.icann.org), que suele delegar en centros regionales. En España, este centro es [Red.es](https://red.es/redes/).
 
 #### 2.1. Servidores DNS
 
@@ -413,7 +422,7 @@ Las traducciones actualizadas se hallan en servidores primarios, que mantienen l
 
 Cuando navegamos por Internet, no hacemos más que realizar peticiones a un servidor, y este nos responde con algo que nuestro navegador puede interpretar. Este *algo* no es más que un fichero HTML, que contiene el esqueleto de la página, *hiperenlaces* a otras páginas que albergan contenido, imágenes, audio, etc.
 
-El contenido de las páginas se direcciona mediante una **URL** (*Uniform Resource Locator*), que indica el protocolo (http o https normalmente), el servidor (o el dominio) y el puerto (si es necesario), de la siguiente forma:
+El contenido de las páginas se direcciona mediante una **URL** (*Uniform Resource Locator*), que indica el protocolo (*http* o *https* normalmente), el servidor (o el dominio) y el puerto (si es necesario), de la siguiente forma:
 
 	https://dominio[:puerto]/path/al/recurso
 
@@ -463,8 +472,66 @@ Las respuestas en caché caducan, o pueden no estar actualizadas. Cuando otro cl
 
 ### 4. El correo electrónico
 
-	De momento no hay nada, ya lo completaré.
+En el **correo electrónico** intervienen cuatro componentes principales:
 
+- **Cliente de correo (*user agent*)** y **servidor de correo(*mail server*):** son los agentes de la conversación (remitente y destinatario) y los servidores, respectivamente. Por cada origen y cada destino, hay un cliente y un servidor.
+- **Simple Mail Transfer Protocol (SMTP):** es el protocolo utilizado para el correo electrónico, aunque no el único implicado en el proceso. 
+- **Protocolos de descarga:** sirven para descargar el correo recibido. Algunos de ellos son **POP3**, **IMAP** y **HTTP**.
+
+#### 4.1. SMTP (RFC 2821)
+
+![SMTP](https://i.imgur.com/tywMwh8.png)
+
+
+En la imagen podemos ver los pasos necesarios para el envío y recepción de un correo electrónico. Si pensamos bien, el modelo cliente-servidor no nos sirve para esto, ya que no es necesario que el destinatario del correo esté conectado para poder enviarlo. Necesitamos disponer de una especie de intermediario que recoja el correo por él, al que pueda pedírselo cuando sí esté en línea. 
+
+Los pasos para el envío de un correo electrónico, algo más explicados que en la imagen, son los siguientes:
+
+1. El usuario origen compone el correo dirigido al usuario destino, utilizando su *agente de usuario*.
+2. Cada usuario tiene asociado un servidor de correo, válido tanto para enviar como para recibir. El usuario origen envía mediante SMTP o HTTP el mensaje a su servidor de correo, que dispone de dos colas: la **cola de salida**, a la que llegan los correos que han sido enviados, y la **cola de entrada**, en la que cada usuario del servidor tiene un espacio reservado en el que se reciben sus correos. 
+3. Periodicamente, el servidor libera todos los correos de la cola de salida, estableciendo una **conexión TCP** con los servidores destino y enviándolos a través de la misma. Se establece una comunicación servidor-servidor.
+4. El servidor del usuario destino ubica los mensajes dirigidos a él en su *mailbox* o espacio reservado.
+5. El usuario, a través de su agente de usuario, descarga los correos utilizando **POP3**, **IMAP** o **HTTP**.
+
+La comunicación entre los agentes es cliente-servidor, pero no siempre en el mismo sentido. El envío de correos entre servidores siempre se realiza utilizando SMTP, pero cuando un usuario descarga el correo, lo hace con el protocolo de descarga de su elección.
+
+##### 4.1.1. Características de SMTP
+
+SMTP se implementa en dos programas:
+
+- **Cliente SMTP:** el servidor actúa como cliente cuando recibe un correo y tiene que reenviarlo a otro servidor. Para ello, activa un puerto dinámico que se conecta con el puerto 25 del destino, y envía el correo a través de esa conexión.
+- **Servidor SMTP:** cuando enviamos un correo, el servidor escucha peticiones en el pueto 25.
+
+Se utiliza el protocolo de transporte **TCP**, ya que no queremos perder información, y no necesitamos un envío instantáneo.
+
+Las fases de SMTP, sin contar con las de conexión y desconexión de TCP, son tres:
+
+- Conexión o *handshaking*.
+- Transferencia de mensajes.
+- Cierre.
+
+La interacción entre cliente y servidor SMTP es interactiva, y se realiza mediante comandos-respuesta, de forma muy parecida a *telnet*. Cuando realizamos acciones desde nuestro cliente de correo (Thunderbird, Mailspring, web), están enviando comandos al servidor web.
+
+Los mensajes deben estar codificados en ASCII de 7 bits, lo cual limita mucho la capacidad de enviar multimedia. Para sortear este problema se añadieron las **extensiones MIME**, para añadir otro tipo de codificación, sobre todo para archivos adjuntos.
+
+#### 4.2. Protocolos de acceso al correo
+
+El protocolo **POP3**, al igual que SMTP, tiene tres fases:
+
+- **Fase de conexión:** se realiza una autenticación mediante usuario y contraseña.
+- **Fase de transacción:** se listan los correos, asociándolos a un índice para operar con ellos (leer, eliminar, etc.). En POP3, tras leer un correo se elimina inmediatamente, ya que no está preparado para guardar correos a largo plazo.
+- **Fase de actualización:** tras cerrar la conexión, se eliminan los correos que se le han indicado al servidor.
+
+**IMAP** tiene ventajas frente a POP3:
+
+- Es ***state-full***: permite organizar los correos en el servidor, y almacenarlos a largo plazo.
+- Permite descargar partes de los mensajes.
+- Se puede acceder desde varios clientes.
+
+Y por último, **webmail** dispone de todas las ventajas de HTTP:
+
+- **Organización total en el servidor:** el agente de correo está integrado en el servidor web.
+- **Seguridad:** se utiliza HTTPS, y los emails se envían encriptados.
 
 ### 5. Protocolos seguros
 
@@ -539,12 +606,3 @@ En las distintas capas de TCP/IP se definen una serie de **protocolos seguros**.
 
 
 ---
-
-## Referencias
-[^1]: [Modelo OSI - Wikipedia](https://es.wikipedia.org/wiki/Modelo_OSI)
-[^2]: [International Organization for Standardization - Wikipedia](https://es.wikipedia.org/wiki/Organizaci%C3%B3n_Internacional_de_Normalizaci%C3%B3n)
-[^3]: [Protocolo TCP - Wikipedia](https://es.wikipedia.org/wiki/Protocolo_de_control_de_transmisi%C3%B3n)
-[^4]: [Internet Protocol - Wikipedia](https://es.wikipedia.org/wiki/Protocolo_de_internet)
-[^5]: [Peering - Wikipedia](http://en.wikipedia.org/wiki/Peering)
-[^6]: [Tier 1 Networks - Wikipedia](https://en.wikipedia.org/wiki/Tier_1_network)
-[^7]: [Internet Exchange Point - Wikipedia](https://en.wikipedia.org/wiki/Internet_exchange_point)
