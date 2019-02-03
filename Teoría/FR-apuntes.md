@@ -42,7 +42,7 @@ Este documento recoge apuntes de la asignatura **Fundamentos de Redes**, basados
 
 #### 1.1. Conceptos básicos
 
-Un **Sistema de comunicación** es una infraestructura que permite el intercambio de información. Podemos expresarlo como un conjunto de elementos:
+Un **Sistema de comunicación** es una infraestructura que permite el intercambio de información. Podemos expresarlo como un conjunto de elementos: 
 
 - **Emisor:** origen de la información.
 - **Destino:** destinatario de la información transmitida.
@@ -240,6 +240,10 @@ El direccionamiento necesitamos los siguientes elementos:
 
 #### 1.1. Arquitectura Cliente/Servidor
 
+Un  **servidor** es una aplicación que permite el acceso remoto a recursos software o hardware en un host. Estará en escucha hasta recibir alguna solicitud por parte de un **cliente**.
+
+Las características del cliente y el servidor son diferentes:
+
 **Servidor**
 - Siempre en funcionamiento.
 - IP permanente y pública.
@@ -251,17 +255,16 @@ El direccionamiento necesitamos los siguientes elementos:
 - Se comunican con el servidor.
 - No se comunican entre sí.
 
-**Proceso cliente:** proceso que inicia la comunicación.
-**Proceso servidor:** proceso que espera a ser contactado (IP permanente y pública).
+Son los clientes los que inician la conexión, y por lo general no se comunican entre sí.
 
 El proceso envía y recibe mensajes desde su **socket**.
 Para poder recibir mensajes, un proceso debe estar identificado por su IP y su puerto.
 
 #### 1.2. La interfaz socket
 
-Un **socket** es un descriptor de transmisión entre aplicaciones. Permite el acceso entre la aplicación y los servicios de transporte.
+Un **socket** es un descriptor de transmisión entre aplicaciones. Cuenta con una especie de API que los procesos utilizan para acceder a los servicios de transporte de forma segura. Cuando se quiere realizar una comunicación, se le asigna un **puerto**.
 
-En la práctica, un socket es un puntero a una estructura de datos relativos a la comunicación.
+En definitiva, un socket es un proceso o thread que existe en el cliente y el servidor, que se utiliza para que ambos escriban y lean la información, que será transmitida por las capas de red. Es un puntero a una estructura.
 
 	Insertar imagen p7
 
@@ -269,25 +272,31 @@ En la práctica, un socket es un puntero a una estructura de datos relativos a l
 
 ¿Qué define un protocolo?
 - **El tipo de servicio**
-  - Orientado a conexión o no
-  - Realimentado o no
+  - Orientado a conexión o no.
+  - Realimentado o no.
 - **El tipo de mensaje**
 - **La sintaxis**
-  Definición y estructura de campos en el mensaje
+  Definición y estructura de campos en el mensaje.
 - **La semántica**
-  Significado de los campos
+  Significado de los campos.
 - **Las reglas**
-  Envío y respuesta de mensajes por parte de los procesos
+  Envío y respuesta de mensajes por parte de los procesos.
 
-Tipos de protocolos
-- Protocolos de dominio público *versus* propietarios.
-- Protocolos in-band *versus* out-of-band.
-- Protocolos stateless *versus* state-full.
-- Protocolos persistentes *versus* no persistentes.
+Existen varios tipos de protocolos:
+- **Protocolos de dominio público:** están definidos en los [RFCs](https://www.wikiwand.com/en/Request_for_Comments), y buscan ser estandarizados. Ejemplos: HTTP, FTP.
+- **Protocolos propietarios:** son creados por un organismo privado, y buscan ser lo más opacos posible, para que nadie sepa cómo funcionan.
 
-La tendencia es definir los protocolos de forma flexible, utilizando una cabecera fija y una serie de trozos (*chunks*), algunos obligatorios y otros opcionales.
+También hay varias clasificaciones de protocolos, aunque menos importantes:
+- **Protocolos in-band *versus* out-of-band:** los protocolos *in-band* envían en el mismo mensaje tanto la información como los datos de control, mientras que en *out-of-band* se utilizan diferentes canales para cada cosa.
+- **Protocolos stateless *versus* state-full:** los protocolos *stateless* no guardan información de los clientes en el servidor, mientras que los *state-full* sí. HTTP por ejemplo es stateless, ya que no guarda nuestros datos. Sin embargo, utiliza **cookies**, ficheros almacenados localmente en el cliente. 
+- **Protocolos persistentes *versus* no persistentes:** los protocolos *persistentes* se mantienen conectados, mientras que los *no persistentes* crean una conexión para cada envío de información.
+
+La tendencia es **definir los protocolos de forma flexible**, utilizando una cabecera fija y una serie de trozos (*chunks*), algunos obligatorios y otros opcionales.
 
 Los trozos pueden incluir una cabecera específica más una serie de datos como parámetros. Para los parámetros se usa el formato TLV (*Type-Length-Value*).
+
+	Insertar imagen TLV
+
 
 #### 1.4. Características
 
@@ -295,13 +304,29 @@ Los trozos pueden incluir una cabecera específica más una serie de datos como 
 Algunas aplicaciones soportan mejor la pérdida de datos que otras. En audio, por ejemplo, es tolerable; otros servicios como telnet o ssh requieren fiabilidad en la transmisión.
 
 **Requisitos temporales**
-Algunas apps requieren retardo acotado (delay) para ser efectivas, como pueden ser las de telefonía o juegos.
+Algunas apps requieren retardo acotado (bajo *delay*) para ser efectivas, como pueden ser las de telefonía o juegos.
 
-**Ancho de banda**
-Algunas apps necesitan enviar datos a una determinada tasa de transmisión.
+**Rendimiento (*throughput*)**
+Algunas apps necesitan enviar datos a una determinada tasa de transmisión. Por ejemplo, al ver una película por streaming necesitamos que cada cierto tiempo nos lleguen frames, o se parará. 
 
 **Seguridad**
 Encriptación, autenticado, etc.
+
+A continuación se muestran ejemplos de aplicaciones de red, y la importancia que le dan a las anteriores características:
+
+| **Aplicación**            | **Pérdida de datos** | **Rendimiento**            | **Sensible al tiempo** |
+|---------------------------|----------------------|----------------------------|------------------------|
+| Transferencia de archivos | no hay pérdida       | elástico                   | no                     |
+| E-mail                    | no hay pérdida       | elástico                   | no                     |
+| Documentos web            | no hay pérdida       | elástico                   | no                     |
+| Multimedia en tiempo real | se puede perder algo | audio: 5kpbs video: 10kbps | sí                     |
+| Audio o vídeo almacenado  | se puede perder algo | audio: 5kpbs video: 10kbps | sí                     |
+| Videojuegos online        | se puede perder algo | unos cuantos kbps          | sí                     |
+| Mensajería instantánea    | no hay pérdida       | elástica                   | depende                |
+
+
+En la mensajería instantánea es preferible que el mensaje tarde algo más en llegar a que existan pérdidas, de ahí el *depende* en la tabla.
+
 
 #### 1.5. Protocolos
 
