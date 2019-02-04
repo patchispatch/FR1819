@@ -594,11 +594,67 @@ En las distintas capas de TCP/IP se definen una serie de **protocolos seguros**.
 
 ### 6. Aplicaciones multimedia
 
-	Ya lo completaré algún día
+Las **aplicaciones multimedia** son aquellas relacionadas con el audio y el vídeo, y en ellas la **calidad de servicio (*QoS*)** es muy importante, refiriéndonos a ella como la capacidad de ofrecer el rendimiento necesario para que la aplicación funcione correctamente. La calidad se puede medir en *máximo delay* o en *throughput necesario*.
+
+Otra forma de evaluar la calidad sería preguntando al cliente si todo ha ido bien, como cuando terminamos una llamada en Skype o Telegram. Esto se denomina **calidad de experiencia**.
+
+Gracias a estas medidas de calidad se intenta proveer un servicio multimedia en Internet, un medio que apenas ofrece garantías en este aspecto: no podemos asegurar un delay mínimo ni un throughput máximo, pero nuestro servicio los necesita.
+
+#### 6.1. Tipos de aplicaciones
+
+Existen tres tipos de aplicaciones multimedia, cada cual más complejo de implementar que el anterior:
+
+- **Flujo de audio y vídeo almacenado (*streaming*):** no da muchos problemas, ya que, al almacenarse el audio o vídeo en un buffer intermedio, tenemos cierto margen para recibir el resto. En otras palabras, aunque se siga necesitando un throughput elevado, el delay no nos importa tanto, aunque es posible que debido a esto el usuario tenga que esperar un poco para iniciar la reproducción.
+- **Flujo de audio y vídeo en vivo:** no podemos relajarnos tanto con el delay como en el caso anterior, aunque no importa que la retransmisión vaya un par de segundos por detrás de lo que está ocurriendo; el buffer intermedio sigue pudiendo utilizarse.
+- **Audio y vídeo interactivo:** aquí la cosa se complica, ya que si queremos que la interactividad entre en juego necesitamos disponer de los paquetes lo antes posible. Si no, al hablar con alguien a través de servicios como Discord nos escucharían con segundos de retraso, y sería algo incómodo. Necesitamos que parezca que no hay una red entre los usuarios, sino que todo es inmediato.
+
+#### 6.2. Características
+
+- **Ancho de banda elevado.**
+- Las aplicaciones son **tolerantes a la pérdida de datos**.
+
+Para asegurar un buen funcionamiento, existen los siguientes mecanismos:
+
+- **Delay acotado:** necesitamos asegurarnos de que debido al delay no llenemos el buffer intermedio, o empezaremos a sufrir desconexiones y se cortarña el audio o vídeo.
+- ***Jitter* acotado:** el jitter es la *fluctuación* del delay. Si disponemos de un delay más o menos fijo, podremos gestionar el buffer intermedio correctamente. Si no es así, tendremos problemas, ya que podemos sufrir un delay mayor del esperado y tener cortes.
+- **Multicast:** una forma de compensar el gran ancho de banda que necesitan las aplicaciones multimedia es el uso de **multicast**. Las comunicaciones en internet suelen ser *unicast*, es decir, tienen un único destino. Utilizando multicast, podemos establecer una especie de difusión parecida a la radio o a la televisión, a la que los usuarios se pueden suscribir para recibir el contenido, que se dividirá las veces que sea necesario hasta llegar a cada destino. De esta forma, únicamente necesitamos transmitir una señal para llegar a diferentes usuarios, ahorrando ancho de banda.
+
+
+
+
+![multicast](https://i.imgur.com/u7bY3mE.png)
+
+
 
 ### 7. Aplicaciones para interconectividad de redes locales
 
-	Lo mismo
+#### 7.1. DHCP
+
+Al conectarnos a una red, el router nos asigna una dirección IP de forma dinámica, ya que si no tendríamos que hacerlo de forma manual. De esto se encarga **DHCP (*Dynamic Host Configuration Protocol*)**, consiguiendo que la conexión a una red sea sencilla y accesible para usuarios sin conocimiento técnico.
+
+DHCP nos asigna una dirección IP dentro del rango en el que esté configurado, la IP del servidor DNS primario y secundario, y el punto de acceso (normalmente un router) que vamos a utilizar.
+
+DHCP no es usado únicamente para direcciones IP privadas, sino que los ISP lo utilizan al asignar las direcciones de los routers de forma que se ahorran costes, variando según el número de usuarios conectados cada cierto tiempo.
+
+Los pasos que realiza DHCP para asignar una dirección son los siguientes:
+1. El cliente, aún sin IP, envía un mensaje a una dirección **broadcast**, ya que no conoce la dirección del servidor DHCP. Este mensaje se denomina **DHCPDISCOVER**.
+2. El servidor DHCP estará escuchando en el puerto 69, y al recibir la petición, responderá con un paquete llamado **DHCPOFFER**, enviándolo a la dirección broadcast de nuevo, de forma que el cliente la escuche en el puerto 68. El paquete incluye una dirección IP para el cliente y un identificador, por si hubiese más clientes solicitando direcciones.
+3. El cliente, al escuchar el paquete anterior, puede solicitar dicha IP, ya que no se le ha asignado, sino simplemente ofrecido. Envía el paquete **DHCPREQUEST** a la dirección broadcast.
+4. El servidor, al recibir el paquete, asignará la dirección al cliente, y enviará una confirmación mediante el paquete **DHCPACK**, de nuevo, a la dirección broadcast.
+
+#### 7.2. DynDNS y No-IP
+
+Estos servicios permiten instalar servidores detrás de un router y con una IP privada, previniendo los cambios de IP que los ISP realizan sobre la dirección pública del router mediante DHCP.
+
+Desde fuera de casa podemos acceder a nuestro router, pero no a las máquinas conectadas a él. Estos servicios hacen posible el acceso, pudiendo utilizar los diferentes equipos conectados a él como servidores.
+
+**DynDNS** asocia un nombre de dominio a la máquina a la que queremos acceder, y cuando la IP de nuestro router cambie, los servidores DNS se actualizarán rápidamente. El router deberá estar configurado para que redirija las peticiones a ese nombre de dominio a la máquina seleccionada. **No-IP** funciona de la misma forma.
+
+
+#### 7.3. Universal Plug and Play
+
+Este servicio es parecido a los anteriores, pero no utiliza un nombre de dominio para que se pueda acceder desde fuera. Lo utilizan servicios como Skype, que se comunican con el router para que realice la redirección comentada en el punto anterior.
+
 
 
 ## Tema 3: Capa de transporte en Internet
