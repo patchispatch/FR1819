@@ -659,6 +659,87 @@ Este servicio es parecido a los anteriores, pero no utiliza un nombre de dominio
 
 ## Tema 3: Capa de transporte en Internet
 
+### 1. Introducción
+
+La capa de transporte es aquella en la que se sitúan los protocolos que utilizaremos para enviar los paquetes de datos desde un punto a otro, controlando la comunicación de diferentes formas.
+
+Veremos los protocolos **UDP** y **TCP**, y hablaremos de la multiplexación/demultiplexación de aplicaciones utilizando **puertos**. También estudiaremos algunas de las medidas de control que implementa TCP, tales como el **control de flujo**, **de errores** y **de congestión**.
+
+
+### 2. UDP (*User Datagram Protocol*)
+
+**UDP** es un servicio **no orientado a conexión**, en el que no se implementan medidas tales como control de flujo, errores o congestión. Se trata de un protocolo *best-effort*, ya que, al enviar los datos, no tiene ninguna forma de asegurarse de que han llegado al receptor. Por hacer una comparación, sería como enviar una carta; no puedes saber si la otra persona la ha recibido, ni si se ha perdido por el camino.
+
+#### 2.1. Formato de cabecera UDP
+
+La cabecera de un paquete UDP se compone de los siguientes campos:
+
+- **Puerto origen** (2 Bytes)
+- **Puerto destino** (2 Bytes)
+- **Longitud UDP:** cabecera + datos (2 Bytes)
+- **Checksum:** permite hacer un pequeño control de errores. Incluye cabecera, datos y una *pseudocabecera*, que incluye información de la capa de red, como la IP origen, destino, tipo de protocolo (en este caso UDP) y un campo que siempre se encuentra a 0 (también ocupa 2 Bytes).
+
+En la **pseudocabecera** se incluyen las IPs para el cálculo del checksum, que se utiliza tanto para encontrar errores en las IPs como en la cabecera UDP. De esta forma podremos comprobar que el paquete que hemos recibido es para nosotros o se ha extraviado.
+
+![demul-udp](https://i.imgur.com/gmeNgvn.png "Demultiplexación UDP")
+
+
+En esta imagen vemos cómo realiza UDP la demultiplexación de paquetes, enviando los datos de todas las aplicaciones por el mismo canal, es decir, por la misma tarjeta de red; la información se **multiplexa** cuando se recibe y se **demultiplexa** cuando se envía.
+
+
+#### 2.2. Cálculo del ckecksum
+
+El **ckecksum** es algo utilizado tanto en UDP como TCP e IP, y se calcula siempre de la misma forma: calculando el complemento a uno de la suma en complemento a uno de las palabras de 16 bits de la pseudocabecera, cabecera y datos del paquete. Si el resultado contiene un número impar de octetos, se rellena con ceros por la derecha hasta obtener una palabra de 16 bits.
+
+#### 2.3. Ejemplos de protocolos que utilizan UDP
+
+| **Puerto** | **Servicio** | **Descripción** |
+|------------|--------------|
+| 53 | DNS | Servicio de nombre de dominio |
+| 69 | TFTP | Versión simple de FTP |
+| 123 | NTP | Protocolo de sincronización de tiempo de red |
+| 161 | SNMP | Protocolo simple de administración de red |
+| 520 | RIP | Protocolo de información de encaminamiento |
+
+UDP también se utiliza en protocolos multimedia debido a su rapidez, ya que necesitamos que la información llegue rápido, y no nos importa perder algún paquete por el camino.
+
+
+### 3. TCP (*Transmission Control Protocol*)
+
+**TCP**, al contrario que UDP, e sun servicio **orientado a conexión**, ya que a la hora de enviar información se encarga de establecer una conexión entre las dos partes (conocido como *handshaking*), asegurarse de que los envíos se realizan correctamente (y si no es así, volver a realizarlos) y cerrar la conexión. Permite la entrega ordenada y el *full-duplex*.
+
+En TCP, a cada paquete del flujo de datos se le llama **segmento**.
+
+#### 3.1. Formato de cabecera TCP
+
+Las cabeceras TCP contienen los siguientes campos:
+
+- **Puerto origen**.
+
+- **Puerto destino**.
+
+- **Número de secuencia:** permite saber cuántos paquetes se han enviado.
+
+- **Número de acuse de recibo:** permite saber cuántos paquetes han llegado al receptor.
+
+- **Longitud de cabecera**.
+
+- **Flags** con información especial.
+
+- **Ventana:** se utiliza en control de flujo para poder enviar varios segmentos a la vez.
+
+- **Checksum**.
+
+- **Puntero de datos urgentes:** permite diferenciar los datos más importantes del resto dentro del *payload*.
+
+- **Opciones:** este parámetro es variable, y se puede definir, por ejemplo, que la longitud de la cabecera sea variable.
+
+  
+
+![TCP](https://i.imgur.com/iWLTK8t.png "Campos de cabecera TCP")
+
+
+
 
 
 ---
