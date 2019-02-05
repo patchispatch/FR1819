@@ -1,3 +1,5 @@
+![licencia-software](https://img.shields.io/github/license/patchispatch/FR1819.svg?label=software&style=flat-square)
+
 # FR1819
 Material de la asignatura Fundamentos de Redes, del Grado en Ingeniería Informática en la Universidad de Granada. 
 
