@@ -740,6 +740,159 @@ Las cabeceras TCP contienen los siguientes campos:
 
 
 
+#### 3.2. Control de conexión
+
+##### 3.2.1. Conexión
+Dado que TCP es un protocolo orientado a conexión, existe el concepto de **conexión**, con su inicio, transmisión de datos y desconexión. 
+
+La conexión inicial en TCP se realiza con el llamado ***three way handshake***, llamado así porque utiliza tres segmentos: uno del origen al destino, otro del destino al origen y un último de nuevo del origen al destino. 
+
+En el primer paquete se inicializa el número de secuencia (de forma pseudo-aleatoria, para evitar colisiones entre distintas conexiones paralelas), que se envía del origen al destino, inicializando el flag **SYN (sincronización)** a uno. Tras esto, el sistema operativo asigna un puerto a la conexión y envía el paquete sin payload, ya que es simplemente un paquete de control.
+
+Cuando el paquete llega al destino, si consiguen conectarse, este enviará un paquete con el flag **ACK (acknowledge)** establecido a uno. Esto quiere decir que el número del acuse de recibo es válido, concretamente es el número de secuencia más uno. Esta información le da a conocer al emisor que la confirmación es de su paquete. Esto es muy importante, ya que el emisor estará enviando paquetes consecutivos, que pueden llegar desordenados, y tiene que saber cuáles han sido recibidos.
+
+Al ser una conexión *full-duplex*, el destino también realizará lo mismo, inicializando su número de secuencia y estableciendo el flag SYN a uno. 
+
+Cuando el origen recibe el segundo paquete, establece el flag ACK a uno, y comienzan a enviarse los segmentos con datos. el número de secuencia contabiliza los bytes que van en el flujo de datos, actuando como un puntero que señala a lo último que se ha enviado.
+
+
+##### 3.2.2. Desconexión
+
+Para realizar la **desconexión**, se realizan casi los mismos pasos que para establecer la conexión, pero utilizando un flag llamado **FIN**.
+El host que quiere desconectar envía un segmento en el que establece el flag FIN a uno. Se enviarán el resto de datos, y cuando el otro lo reciba se confirmará la desconexión, enviando un paquete con el flag FIN.
+
+Cuando el host que quiere desconectarse envía el paquete, inicia un temporizador antes de cerrar la conexión, por si el paquete de desconexión ha llegado antes que otros con datos.
+
+
+##### 3.2.3. Números de secuencia
+
+Los **números de secuencia** son campos de 32 bits, lo cual limita el número de valores en una conexión a 2^32. Si agotásemos los valores, empezarían de nuevo.
+
+Para inicializar los números se utiliza el **ISN (Initial Sequence Number)**, que puede ser elegido por el sistema operativo o un número aleatorio. Según el estándar, se sugiere utilizar un contador entero que incremente su valor cada 4 microsegundos. Este contador no afecta a los flujos TCP, simplemente se consulta al iniciar una conexión.
+
+Una vez inicializado, se incrementa según los datos enviados en el payload, no según el número de segmentos enviados. Existen, sin embargo, dos excepciones: los segmentos que lleven el flag SYN o el flag FIN a uno incrementan el número de secuencia en uno.
+
+
+
+#### 3.3. Diagrama de estados de TCP
+
+Este diagrama de estados está especificado en el RFC de TCP.
+
+![tcp-state](https://i.imgur.com/RNYSVXM.png)
+
 
 
 ---
+
+
+
+Cada nodo representa un estado en el que puede estar cualquiera de las dos máquinas conectadas mediante TCP.
+
+En el lado del cliente se realiza una **apertura activa**, enviando un SYN (estado **SYN_SENT**), y tras esto esperaráun segmento con SYN + ACK. Finalmente, mandará un ACK, y pasará al estado **ESTABLISHED**, tras el cual se empiezan a enviar datos.
+
+Desde el servidor se realiza una **apertura pasiva**. Inicialmente se encuentra en el estado **LISTEN**, escuchando peticiones en un puerto determinado. En cuanto reciba un SYN, responderá con un SYN + ACK, pasando al estado **SYN_RCVD**. Cuando reciba un ACK en este estado, pasará a **ESTABLISHED**.
+
+Si nos fijamos, podemos ver que el **three way handshake** no es la única forma de establecer una conexión, aunque sí es la más simple y directa.
+
+El cierre de la conexión funciona de forma similar, pudiendo realizar un **cierre activo** (enviar el flag FIN, recibir FIN + ACK, enviar ACK) o uno **pasivo** (recibir FIN, enviar FIN + ACK, recibir ACK).
+
+Existen métodos alternativos, pero más largos, siendo muchos de ellos **four way handshake**, ya que necesitamos un paso más para terminar de enviar los datos antes de iniciar la desconexión.
+
+
+
+#### 3.4. Control de errores y flujo
+
+El **control de flujo** y el **control de congestión** se encargan de reducir la velocidad de la transmisión, el primero para no congestionar la red, y el segundo para no saturar al receptor. Además, comprueba que todos los paquetes se han recibido, y además en orden.
+
+TCP envía segmentos juntos, ya que si tuviese que esperar a recibir el ACK de un segmento para enviar el siguiente, se perdería mucho tiempo (esta técnica se llama *stop&wait*).
+
+Como queremos minimizar ese **tiempo muerto**, en lugar de enviar un único segmento se envían grupos llamados **ventanas**. Al enviar varios segmentos de golpe sin esperar ACK, reducimos el tiempo muerto. Aun así, seguimos recibiendo ACK de cada paquete, ya que si recibiésemos uno por ventana estaríamos en la misma situación que antes.
+
+Esto suena bien, pero necesitamos saber si el receptor puede recibir todos esos datos a la velocidad de transmisión con la que se están enviando. Aquí entra en juego el **control de flujo**.
+
+Utilizaremos dos medidas:
+
+- **Confirmaciones positivas:** los ACK. Cuando llega un segmento que está bien, se pone un ACK indicando el siguiente valor que esperamos.
+- **Timeout:** tiempo que se inicializa cuando se envía un segmento para que, en caso de que se pierda el segmento o el ACK, se envíe de nuevo la información.
+
+El timeout puede dar problemas, ya que fijar un tiempo muy corto puede resultar en que se agote cuando se había enviado el ACK, y enviemos la información de nuevo sin necesidad, esperando el receptor el siguiente segmento.
+
+Podemos ver las acciones que realiza TCP en esta tabla:
+
+| **Evento**                                                   | **Acción del TCP receptor**                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| Llegada ordenada de segmento, sin discontinuidad, todo lo anterior ya confirmado. | Retrasar ACK. Esperar a recibir el siguiente segmento hasta 500ms. Si no llega, enviar ACK. |
+| Llegada ordenada del segmento, sin discontinuidad, hay pendiente un ACK retrasado. | Inmediatamente enviar un único ACK acumulativo.              |
+| Llegada desordenada de segmento con número de secuencia mayor que el esperado, discontinuidad detectada. | Enviar un ACK duplicado, indicando el número de secuencia del siguiente byte esperado. |
+| Llegada de un segmento que completa una discontinuidad parcial o totalmente. | Confirmar ACK inmediatamente si el segmento comienza en el extremo inferior de la discontinuidad. |
+
+
+
+Mientras que en el emisor llevamos la cuenta de lo que hemos enviado, en el receptor lo tenemos para lo que nos ha llegado y lo que no, para que, una vez lo tengamos todo, lo mandemos a la capa de aplicación.
+
+
+
+##### 3.4.1. Estimar los *timeouts*
+
+Ya hemos visto lo que pasa si especificamos mal el timeout: podemos enviar datos más veces de las necesarias.  Por ello, hay que **estimar el timeout** de forma dinámica, dependiendo de la velocidad de la red.
+
+Existe un modelo al que se ajustan más o menos las propuestas para estimar el timeout, y es fijarlo a partir de dos variables:
+
+- **Estimador promedio (RTTmedido):** una especie de media del tiempo que se tarda desde que se emite un segmento hasta que se recibe su ACK.
+- **Estimador sobre la desviación del promedio (Desviación):** desviación típica del timeout.
+
+Nuestro timeout será RTTmedido + 4*Desviación. 
+
+Estas variaciones siguen una distribución Gaussiana, es decir, aunque algunos puntos no concuerden, el 99.96% estarán entre la media más/menos la desviación típica multiplicada por tres. Si multiplicamos la desviación típica por cuatro, tendremos un timeout perfecto. 
+
+
+
+##### 3.4.2. Ventana de transmisión
+
+La ventana por la que transmitimos los segmentos se conoce como **ventana deslizante**, ya que se mueve por el flujo de datos, dividido en segmentos por TCP. Envía lo que está dentro, y avanza a medida que recibe ACKs, enviando más datos.
+
+El control de flujo en TCP es un **sistema crediticio**, y su objetivo es no saturar al receptor (evitar un *buffer overflow*). Para implementar esto, el receptor avisa al emisor cuando quiere recibir datos, y esta información se mide en créditos: si el receptor puede aceptar 6KB, el crédito tendrá ese valor, mientras que si no puede recibir nada el valor del crédito será 0KB y se detendrá el envío de datos.
+
+Este crédito se refleja en el parámetro **window** de la cabecera. Al enviar información también dejamos claro cuánta información podemos recibir, y si esto nos llega en los ACK del receptor, podemos saber cuánto tenemos que enviar.
+
+El parámetro window refleja la capacidad del buffer de recepción que TCP utiliza para guardar los segmentos recibidos antes de enviarlos a la capa de aplicación. Dicho buffer es finito, y puede estar lleno o a medias. La parte del buffer que queda libre se denomina **ventana ofertada**.
+
+Cuando el emisor recibe un segmento con la información del parámetro window, resta a la ventana ofertada los bytes que ha enviado pero no confirmado, ya que en el segmento en el que hemos recibido los datos de la ventana se nos ha confirmado la recepción hasta un determinado valor. Esto se llama **ventana útil**, y determina la cantidad de información que podemos enviar en cada momento.
+
+Considerar los bytes en tránsito parece algo razonable, pero puede dar problemas. El buffer de recepción cada vez tendrá segmentos más pequeños si la capa de aplicación procesa los datos muy lentamente, y estaremos enviando paquetes con prácticamente más cabecera que contenido. Esto es conocido como el **síndrome de la ventana tonta**, y una posible solución es considerar que el receptor procesará los datos a medida que los vaya recibiendo (**ventana optimista**). Si se produce un buffer overflow, el emisor tendrá que enviar de nuevo algunos datos, pues no recibirá confirmación.
+
+Otra posible solución sería retrasar el envío de la confirmación hasta acumular un mínimo de espacio libre en el buffer de recepción, y así el parámetro window siempre tendrá un crédito mínimo. El emisor también podría implementar esto, esperando a recibir un crédito determinado para reanudar el envío.
+
+
+
+##### 3.4.3. Información urgente
+
+Existen dos flags para indicar a TCP que debe dar prioridad a algunos datos:
+
+- **URG:** cuando al receptor le llega un paquete con el flag URG activo, ignora el buffer de recepción y envía la información directamente a la capa de aplicación. Estos datos están situados al inicio de un paquete, y el puntero que marca la separación se activa cuando el flag está a uno.
+- **PSH (Push):** este flag se inicializa desde la capa del emisor, e indica a TCP que esa información es tan importante que debe ser mandada, sin esperar a leer datos para rellenar un segmento completo. Cuando llega al receptor se hace lo mismo que con URG: enviar los datos directamente a la capa de aplicación.
+
+URG está prácticamente obsoleto.
+
+
+
+#### 3.5. Control de congestión
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
