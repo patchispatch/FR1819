@@ -1000,7 +1000,7 @@ También gestiona la fragmentación, ya que en Internet coexisten muchos tipos d
 
 #### 2.1. Direcciones IP
 
-
+Cada punto conectado en Internet dispone de una dirección IP que lo identifica. Aunque normalmente utilicemos el nombre de dominio para acceder a servidores y sitios, el protocolo DNS se encarga de traducirlo automáticamente a su dirección IP correspondiente.
 
 
 
