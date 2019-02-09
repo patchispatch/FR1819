@@ -878,15 +878,127 @@ URG está prácticamente obsoleto.
 
 #### 3.5. Control de congestión
 
+Mientras que el control de flujo se aseguraba de que el receptor no se saturase, en el **control de congestión** se procurará que la red no se sature.
+
+Esto nos da algún que otro problema, ya que la red no tiene un parámetro **window** que nos diga cuánta información podemos mandar, sino que se debe detectar cuándo está saturada la red. Para ello, el emisor debe medir de alguna forma el tiempo, y la forma más sencilla es controlando **el retraso o la pérdida de ACKs**: si un ACK no llega a tiempo (o directamente no llega), algo debe haber pasado, aunque no tiene por qué ser debido a la congestión de la red. Esto es algo que debemos estimar de algún modo.
+
+Existen diferentes versiones de TCP, y su mayor diferencia es cómo gestionan la congestión de la red. La versión inicial de TCP, **TCP Tahoe**, prefiere perder velocidad de transmisión antes que saturar la red.
+
+TCP Tahoe realiza el control de congestión de la siguiente forma:
+
+La velocidad de transmisión se controla con la **ventana de congestión**, y al iniciar la conexión, TCP la inicializa al tamaño máximo que puede ocupar un segmento. Este estado se denomina **inicio lento**, ya que comenzamos con una ventana pequeña y vamos aumentándola exponencialmente.
+
+Si el tamaño de congestión se encuentra por debajo de un determinado **umbral**, por cada ACK recibido se **duplica** el tamaño de la ventana de congestión.
+
+Una vez se alcance el umbral, cada vez que se reciba un ACK se aumentará el tamaño de la ventana de forma **lineal**, aumentando el tamaño de la ventana de congestión en un MSS. Esta estrategia se denomina **prevención de la congestión**.
+
+Una vez se detecta que la red se ha saturado mediante un **timeout**, realizamos lo siguiente:
+
+1. Fijamos un nuevo umbral como la mitad de la ventana de congestión:
+     ![umbral](http://www.sciweavers.org/tex2img.php?eq=Umbral%20%3D%20%5Clceil%20%5Cfrac%7BVcongestion%7D%7B2%7D%20%5Crceil&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+2. Reestablecemos el tamaño de la ventana de congestión a un MSS.
+
+Cada vez que se produzca un timeout, el algoritmo Tahoe reducirá drásticamente la velocidad de conexión, por lo que se han planteado alternativas, como **TCP Reno**. En Reno, cuando se produce un timeout, la ventana de congestión vuelve a la mitad del tamaño que había alcanzado, creciendo de forma lineal a partir de ese punto.
+
+![tahoe reno](https://i.imgur.com/YzKyHWc.png)
+
+Tahoe funciona mejor cuando realmente la red se ha congestionado, ya que reducirá bastante la velocidad y la red podrá recuperarse. Sin embargo, en las falsas alarmas (un ACK perdido o retrasado), Reno sería mejor, ya que no perdemos todo lo que habíamos alcanzado por error, solo una parte.
 
 
 
+#### 3.6. Combinación entre control de flujo y congestión
+
+El control de flujo limita la velocidad cuando el receptor se satura, y el de congestión lo hace cuando es la red la que lo hace. Entonces, ¿cómo debemos actuar cuando sucede una de estas dos cosas? Fácil: escogemos la más restrictiva, es decir, el mínimo entre la ventana de congestión y la que ofrece el receptor en el parámetro window.
+
+A la hora de enviar, a no ser que queramos evitar la ventana tonta, debemos calcular también la ventana útil, restando al resultado anterior los bytes en tránsito.
 
 
 
+## Tema 4: Redes conmutadas e Internet
+
+La capa de red actúa como una interfaz para la capa de enlace, permitiendo que las distintas tecnologías de las redes presentes en Internet se comuniquen entre sí. Para ello, la capa de red cuenta con las siguientes funcionalidades:
+
+- Conmutación.
+- Encaminamiento.
+- Interconexión de redes.
+- Control de congestión.
+
+En el modelo OSI, el control de congestión se encuentra en la capa de red. Sin embargo, en TCP/IP está en la capa de transporte, es decir, lo realiza el protocolo TCP, como ya hemos visto.
+
+El ejemplo más claro de protocolo de red es **IP**.
 
 
 
+### 1. Conmutación
+
+> *La **Conmutación** se considera como la acción de establecer una vía, un camino, de extremo a extremo entre dos puntos, un emisor (Tx) y un receptor (Rx) a través de nodos o equipos de transmisión. La conmutación permite la entrega de la señal desde el origen hasta el destino requerido.*
+
+Definición de conmutación en [Wikipedia](https://es.wikipedia.org/wiki/Conmutación_%28redes_de_comunicación%29).
+
+La **conmutación** en internet se encarga de conectar dos puntos para transmitir información. Podría verse como una redirección, pero es más complejo. Hay diferentes formas de realizarla:
+
+- **Conmutación basada en *circuitos*:** se establece un circuito entre los dos puntos para realizar la comunicación, pasando por nodos intermedios, al iniciar la comunicación. Dicho circuito permanecerá durante el resto de la comunicación, y los recursos del mismo estarán destinados únicamente a esa comunicación. Un ejemplo de este tipo de conmutación es la *red telefónica*.
+
+- **Conmutación basada en *paquetes***, que se divide en:
+
+  - **Conmutación basada en *datagramas*:** esta es la conmutación basada en paquetes como tal. La comunicación se divide en paquetes y cada uno es una entidad independiente que viaja a través de Internet por posibles caminos diferentes.
+  - **Conmutación basada en *circuitos virtuales*:** es una mezcla entre la conmutación por circuitos y por paquetes, en la que se envían los paquetes siguiendo el mismo camino.
+
+#### 1.1. Conmutación de circuitos
+
+Como hemos comentado antes, el ejemplo más claro de conmutación de circuitos es la red telefónica tradicional. cada línea instalada en casa está conectada con una central local. Esa central, a su vez, está conectada con más nodos a nivel regional, y estos a nivel nacional. Cada vez que realizamos una llamada, se define un circuito entre un terminal y otro pasando por estos nodos, completamente dedicado a la llamada.
+
+Aunque no estemos enviando información, seguimos teniendo esa porción de línea asignada. Por ejemplo, cuando nos quedamos callados en una llamada, se está enviando información vacía. Dicho de otro modo, estamos malgastando recursos, pero de esta forma minimizamos retardos, ya que si no, tendríamos que volver a reservar recursos cuando quisiésemos volver a hablar. El único retardo existente es el tiempo que tarda la red en asignar el circuito entre los dos nodos terminales.
+
+La conmutación de circuitos tiene varios pasos:
+
+1. **Conexión:** se reservan los recursos para la comunicación. En la llamada telefónica, se conectan las dos líneas. Una vez se escucha señal ya se ha establecido la comunicación, independientemente de que el receptor descuelgue la llamada o no.
+2. **Transmisión.**
+3. **Desconexión.**
+
+En TCP considerábamos Internet como un medio uniforme por el cual se transmitían los datos de forma directa. Sin embargo, en la capa de red ya percibimos con más detalle los distintos nodos intermedios por los que pasa la información.
+
+
+
+![diagrama circuito](https://i.imgur.com/C61K0HW.png)
+
+En este diagrama podemos observar el tiempo que se tarda en transmitir la información utilizando conmutación basada en circuitos. En el primer envío se establece la comunicación, y en los posteriores apenas hay retardos, ya que se han reservado los recursos.
+
+La parte negativa de la conmutación por circuitos es que necesitamos una infraestructura mucho mayor que una red de comunicación basada en paquetes para el mismo número de usuarios.
+
+
+
+#### 1.2. Conmutación de paquetes
+
+##### 1.2.1. Conmutación de datagramas
+
+La **conmutación de datagramas** es la versión más purista de la conmutación de paquetes, y es la utilizada por el protocolo IP. En ella no existe la conexión como tal, pues no es necesario reservar recursos. Sin embargo, cada paquete que enviemos sufrirá un retardo de procesamiento al pasar por cada nodo.
+
+![diagrama paquetes](https://i.imgur.com/vzkGag6.png)
+
+
+
+Cada paquete deberá llevar información sobre su destino, al ser entidades lógicas independientes. Por tanto, cada paquete puede ser encaminado por un sitio distinto, y los paquetes no tienen por qué llegar ordenados, ni el número de nodos intermedios ser el mismo. El diagrama de arriba no es realista, pero ayuda a comprender cómo viajan los paquetes por la red.
+
+##### 1.2.2. Conmutación de paquetes con circuitos virtuales
+
+En este tipo de conmutación, se crea un circuito por encima de la red basada en datagramas para enviar por él todos los paquetes y reducir el tiempo de procesamiento. 
+
+No obstante, existe un problema: la **menor robustez**. En la red conmutada por datagramas sabemos que, aunque un enlace entre dos nodos se caiga, los paquetes podrán llegar por otras vías, ya que son independientes . Si el circuito virtual que se ha definido cae, habrá que realizar uno nuevo, algo que también pasaba en la conmutación por circuitos. 
+
+Al contrario que la conmutación basada en circuitos, no dispone de recursos dedicados exclusivamente a la comunicación, simplemente utiliza una ruta para enviar todos los paquetes por ella, pero no es exclusiva. Esto hace que no necesitemos una infraestructura mayor, como sí pasaba con los circuitos.
+
+
+
+### 2. El protocolo IP
+
+El protocolo **IP** o protocolo de Internet se utiliza para enviar datos de forma bidireccional a través de distintas redes físicas intercomunicadas.  Actualmente se utilizan dos versiones, **IPv4**, la más extendida, e **IPv6**. IPv6 soluciona bastantes problemas que IPv4 tenía, y se ha hecho un gran esfuerzo por extenderlo.
+
+IP permite la interconexión de redes y el direccionamiento en internet mediante las **direcciones IP**. Se utiliza el enrutamiento para enviar paquetes. Es un protocolo no orientado a conexión, muy parecido a UDP.
+
+También gestiona la fragmentación, ya que en Internet coexisten muchos tipos de tecnologías, cada una de ellas preparada para un **tamaño máximo de paquete (MTU)**. IP se encarga de fragmentar los paquetes en caso de que sea necesario al pasar de una red a otra.
+
+#### 2.1. Direcciones IP
 
 
 
