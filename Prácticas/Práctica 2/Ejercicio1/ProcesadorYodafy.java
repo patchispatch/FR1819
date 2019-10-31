@@ -90,6 +90,8 @@ public class ProcesadorYodafy {
 		for(int i=1;i<s.length;i++){
 		  resultado+=" "+s[i];
 		}
+		
+		resultado+=". He dicho."
 
 		return resultado;
 	}
